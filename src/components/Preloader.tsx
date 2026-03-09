@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { useGlobalSettingsContext } from '@/contexts/GlobalSettingsContext';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface Props {
     onComplete: () => void;
@@ -8,6 +9,7 @@ interface Props {
 
 const Preloader = ({ onComplete }: Props) => {
     const { settings, loading } = useGlobalSettingsContext();
+    const isMobile = useIsMobile();
     const containerRef = useRef<HTMLDivElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
     const [isVideoEnded, setIsVideoEnded] = useState(false);
@@ -16,6 +18,12 @@ const Preloader = ({ onComplete }: Props) => {
     const videoUrl = (settings?.preloader_video_url as string) || '/videos/intro.mp4';
 
     useEffect(() => {
+        if (isMobile) {
+            // Immediately complete without animation on mobile
+            onComplete();
+            return;
+        }
+
         // Prevent scrolling while preloader is active
         document.body.style.overflow = 'hidden';
 
@@ -25,7 +33,7 @@ const Preloader = ({ onComplete }: Props) => {
         }, 7000);
 
         return () => clearTimeout(durationTimer);
-    }, [hasStarted]);
+    }, [hasStarted, isMobile, onComplete]);
 
     const handleVideoPlay = () => {
         setHasStarted(true);
@@ -71,7 +79,7 @@ const Preloader = ({ onComplete }: Props) => {
             <video
                 ref={videoRef}
                 src={videoUrl}
-                className="w-full h-full object-cover"
+                className="hidden md:block w-full h-full object-cover"
                 autoPlay
                 muted
                 playsInline
