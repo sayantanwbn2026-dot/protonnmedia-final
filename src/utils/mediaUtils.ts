@@ -30,3 +30,20 @@ export const getYouTubeEmbedUrl = (url: string) => {
     return url;
   }
 };
+
+export const getYouTubeThumbnailUrl = (url: string) => {
+  try {
+    let videoId = '';
+    if (url.includes('youtube.com/watch')) {
+      const urlParams = new URL(url).searchParams;
+      videoId = urlParams.get('v') || '';
+    } else if (url.includes('youtu.be/')) {
+      // Handle youtu.be/VIDEO_ID?attr=...
+      const cleanUrl = url.split('?')[0];
+      videoId = cleanUrl.split('/').pop() || '';
+    }
+    return videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : null;
+  } catch (e) {
+    return null;
+  }
+};

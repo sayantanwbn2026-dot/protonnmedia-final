@@ -1,6 +1,7 @@
 import { useParams, Link } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import MediaRenderer from '@/components/ui/MediaRenderer';
+import { getYouTubeThumbnailUrl } from '@/utils/mediaUtils';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowLeft, Play, Award, Quote } from 'lucide-react';
@@ -223,7 +224,7 @@ const CaseStudyDetail = () => {
                     ) : (
                       <>
                         <img 
-                          src={video.thumbnail || 'https://images.unsplash.com/photo-1518770662639-470d65609e7c?w=1200'} 
+                          src={video.thumbnail || getYouTubeThumbnailUrl(video.url) || 'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=1200'} 
                           alt={video.title} 
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
                           onError={(e) => {
