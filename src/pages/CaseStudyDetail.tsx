@@ -1,5 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import MediaRenderer from '@/components/ui/MediaRenderer';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowLeft, Play, Award, Quote } from 'lucide-react';
@@ -12,6 +13,7 @@ const CaseStudyDetail = () => {
   const { id } = useParams<{ id: string }>();
   const heroRef = useRef<HTMLDivElement>(null);
   const { projects, loading, getProjectBySlug } = useProjects();
+  const [playingVideoUrl, setPlayingVideoUrl] = useState<string | null>(null);
 
   const study = getProjectBySlug(id || '');
 
@@ -118,7 +120,7 @@ const CaseStudyDetail = () => {
                     <div key={bts.title} className={`grid sm:grid-cols-2 gap-6 items-center`}>
                       <div className={index % 2 === 1 ? 'sm:order-2' : ''}>
                         <div className="aspect-[4/3] overflow-hidden">
-                          <img src={bts.image} alt={bts.title} className="w-full h-full object-cover" />
+                          <MediaRenderer url={bts.image} alt={bts.title} className="w-full h-full object-cover" />
                         </div>
                       </div>
                       <div className={index % 2 === 1 ? 'sm:order-1' : ''}>
@@ -209,15 +211,33 @@ const CaseStudyDetail = () => {
             <h2 className="cs-section font-display text-2xl text-center mb-10">Watch the <em className="text-primary">film</em></h2>
             <div className="cs-section grid sm:grid-cols-2 gap-6">
               {videos.map((video) => (
-                <div key={video.title} className="group relative cursor-pointer" data-cursor-hover>
+                <div 
+                  key={video.title} 
+                  className="group relative cursor-pointer" 
+                  data-cursor-hover 
+                  onClick={() => video.url && setPlayingVideoUrl(video.url)}
+                >
                   <div className="relative aspect-video overflow-hidden">
-                    <img src={video.thumbnail} alt={video.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                    <div className="absolute inset-0 bg-background/40 group-hover:bg-background/20 transition-colors" />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-14 h-14 rounded-full border border-primary/50 flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <Play className="w-5 h-5 text-primary ml-0.5" />
-                      </div>
-                    </div>
+                    {playingVideoUrl === video.url ? (
+                      <MediaRenderer url={video.url} className="w-full h-full" />
+                    ) : (
+                      <>
+                        <img 
+                          src={video.thumbnail || 'https://images.unsplash.com/photo-1518770662639-470d65609e7c?w=1200'} 
+                          alt={video.title} 
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
+                          onError={(e) => {
+                            e.currentTarget.src = 'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=1200';
+                          }}
+                        />
+                        <div className="absolute inset-0 bg-background/40 group-hover:bg-background/20 transition-colors" />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="w-14 h-14 rounded-full border border-primary/50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <Play className="w-5 h-5 text-primary ml-0.5" />
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </div>
                   <h3 className="font-display text-base mt-3">{video.title}</h3>
                 </div>

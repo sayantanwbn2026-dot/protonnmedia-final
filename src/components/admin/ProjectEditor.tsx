@@ -197,7 +197,7 @@ const ProjectEditor = ({ project, onSave, onCancel }: ProjectEditorProps) => {
             fields={[
               { key: 'title', label: 'Title', placeholder: 'On Set' },
               { key: 'description', label: 'Description', type: 'textarea', placeholder: 'Brief description...' },
-              { key: 'image', label: 'Image URL', type: 'url', placeholder: 'https://...' },
+              { key: 'image', label: 'Image (1200x900 recommended)', type: 'image' },
             ]}
             value={form.behind_the_scenes}
             onChange={(v) => set('behind_the_scenes', v)}
@@ -210,8 +210,8 @@ const ProjectEditor = ({ project, onSave, onCancel }: ProjectEditorProps) => {
             label="Videos"
             fields={[
               { key: 'title', label: 'Title', placeholder: 'Trailer' },
-              { key: 'url', label: 'Video URL', type: 'url', placeholder: 'https://vimeo.com/...' },
-              { key: 'thumbnail', label: 'Thumbnail URL', type: 'url', placeholder: 'https://...' },
+              { key: 'url', label: 'Video (16:9 recommended)', type: 'video' },
+              { key: 'thumbnail', label: 'Thumbnail (1280x720 recommended)', type: 'image' },
             ]}
             value={form.videos}
             onChange={(v) => set('videos', v)}

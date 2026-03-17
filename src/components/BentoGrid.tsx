@@ -5,6 +5,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useProjects } from '@/hooks/useProjects';
 import CinematicProjectView from '@/components/CinematicProjectView';
 import { ProjectDetails } from '@/components/ProjectCinematicOverlay';
+import MediaRenderer from '@/components/ui/MediaRenderer';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -79,9 +80,9 @@ const BentoGrid = () => {
               onClick={() => openPanel(project)}
               className="bento-card relative group overflow-hidden cursor-pointer aspect-[4/5] transition-all duration-300"
             >
-              <div
-                className="absolute inset-0 bg-cover bg-center transition-transform duration-[1.2s] ease-out group-hover:scale-105 grayscale group-hover:grayscale-0"
-                style={{ backgroundImage: `url(${project.image})` }}
+              <MediaRenderer 
+                url={project.image} 
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1.2s] ease-out group-hover:scale-105 grayscale group-hover:grayscale-0" 
               />
               <div className="absolute inset-0 bg-background/70 group-hover:bg-background/50 transition-colors duration-500" />
               <div className="absolute inset-0 p-6 flex flex-col justify-end">

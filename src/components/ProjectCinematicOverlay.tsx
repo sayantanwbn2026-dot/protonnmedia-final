@@ -2,6 +2,7 @@ import { useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { X, ArrowRight } from 'lucide-react';
+import MediaRenderer from './ui/MediaRenderer';
 
 export interface ProjectDetails {
   id: number;
@@ -32,11 +33,11 @@ const ProjectCinematicOverlay = ({ project, isOpen, onClose, showCaseStudyLink =
     if (!isOpen || !panelRef.current || !overlayRef.current) return;
 
     const scrollY = window.scrollY;
-    document.documentElement.style.overflow = 'hidden';
-    document.documentElement.style.position = 'fixed';
-    document.documentElement.style.top = `-${scrollY}px`;
-    document.documentElement.style.width = '100%';
-    document.documentElement.dataset.scrollY = String(scrollY);
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = '100%';
+    document.body.dataset.scrollY = String(scrollY);
 
     gsap.to(overlayRef.current, { opacity: 1, duration: 0.3, ease: 'power2.out' });
     gsap.to(panelRef.current, { x: 0, duration: 0.45, ease: 'power3.out' });
@@ -55,11 +56,11 @@ const ProjectCinematicOverlay = ({ project, isOpen, onClose, showCaseStudyLink =
     gsap.to(overlayRef.current, {
       opacity: 0, duration: 0.25, delay: 0.1, ease: 'power2.in',
       onComplete: () => {
-        const scrollY = parseInt(document.documentElement.dataset.scrollY || '0', 10);
-        document.documentElement.style.overflow = '';
-        document.documentElement.style.position = '';
-        document.documentElement.style.top = '';
-        document.documentElement.style.width = '';
+        const scrollY = parseInt(document.body.dataset.scrollY || '0', 10);
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
         window.scrollTo(0, scrollY);
         onClose();
       },
@@ -88,7 +89,8 @@ const ProjectCinematicOverlay = ({ project, isOpen, onClose, showCaseStudyLink =
       <div
         ref={panelRef}
         className="absolute right-0 top-0 h-full w-full max-w-md border-l border-border/10 overflow-y-auto bg-card/80 backdrop-blur-2xl"
-        style={{ transform: 'translateX(100%)' }}
+        style={{ transform: 'translateX(100%)', WebkitOverflowScrolling: 'touch' }}
+        onWheel={(e) => e.stopPropagation()}
       >
         <button
           onClick={handleClose}
@@ -100,7 +102,7 @@ const ProjectCinematicOverlay = ({ project, isOpen, onClose, showCaseStudyLink =
 
         <div ref={contentRef} className="p-8 pt-16">
           <div className="aspect-video overflow-hidden rounded-sm mb-8">
-            <img src={project.image} alt={project.title} className="w-full h-full object-cover" />
+            <MediaRenderer url={project.image} alt={project.title} className="w-full h-full object-cover" />
           </div>
 
           <div className="mb-6">

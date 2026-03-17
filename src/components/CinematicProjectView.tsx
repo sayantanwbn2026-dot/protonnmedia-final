@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { X, ArrowRight } from 'lucide-react';
 import { ProjectDetails } from './ProjectCinematicOverlay';
+import MediaRenderer from './ui/MediaRenderer';
 
 interface Props {
   project: ProjectDetails | null;
@@ -21,8 +22,12 @@ const CinematicProjectView = ({ project, isOpen, onClose, showCaseStudyLink = tr
   useEffect(() => {
     if (!isOpen || !containerRef.current || !project) return;
 
-    // Prevent body caching scroll glitches by simply hiding overflow
+    const scrollY = window.scrollY;
     document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = '100%';
+    document.body.dataset.scrollY = String(scrollY);
 
     // Initial state
     gsap.set(containerRef.current, { opacity: 0, pointerEvents: 'auto', backdropFilter: 'blur(0px)' });
@@ -79,7 +84,12 @@ const CinematicProjectView = ({ project, isOpen, onClose, showCaseStudyLink = tr
       ease: 'power3.inOut',
       onComplete: () => {
         if (containerRef.current) gsap.set(containerRef.current, { pointerEvents: 'none' });
+        const scrollY = parseInt(document.body.dataset.scrollY || '0', 10);
         document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        window.scrollTo(0, scrollY);
         onClose();
       },
     });
@@ -119,9 +129,9 @@ const CinematicProjectView = ({ project, isOpen, onClose, showCaseStudyLink = tr
 
         {/* Image Section */}
         <div className="w-full md:w-1/2 min-h-[250px] md:min-h-full relative overflow-hidden flex-shrink-0 border-b md:border-b-0 md:border-r border-border/10">
-          <img
-            ref={imageRef}
-            src={project.image}
+          <MediaRenderer
+            ref={imageRef as any}
+            url={project.image}
             alt={project.title}
             className="w-full h-full object-cover"
           />
@@ -129,7 +139,11 @@ const CinematicProjectView = ({ project, isOpen, onClose, showCaseStudyLink = tr
         </div>
 
         {/* Content Section */}
-        <div className="w-full md:w-1/2 flex-1 p-6 md:p-10 lg:p-14 flex flex-col overflow-y-auto bg-card min-h-0">
+        <div 
+          className="w-full md:w-1/2 flex-1 p-6 md:p-10 lg:p-14 flex flex-col overflow-y-auto bg-card min-h-0"
+          style={{ WebkitOverflowScrolling: 'touch' }}
+          onWheel={(e) => e.stopPropagation()}
+        >
           <div ref={contentRef} className="my-auto">
             <div className="mb-6">
               <span className="font-body text-[10px] text-primary uppercase tracking-[0.2em] px-2 py-1 rounded border border-primary/20 bg-primary/5">

@@ -1,9 +1,10 @@
 import { Plus, Trash2, GripVertical } from 'lucide-react';
+import MediaUpload from './MediaUpload';
 
 interface FieldConfig {
   key: string;
   label: string;
-  type?: 'text' | 'textarea' | 'url';
+  type?: 'text' | 'textarea' | 'url' | 'image' | 'video';
   placeholder?: string;
 }
 
@@ -69,6 +70,15 @@ const RepeatableFields = ({ label, fields, value, onChange }: RepeatableFieldsPr
                       onChange={(e) => updateRow(index, field.key, e.target.value)}
                       placeholder={field.placeholder}
                     />
+                  ) : field.type === 'image' || field.type === 'video' ? (
+                    <div className="pt-1">
+                      <MediaUpload 
+                        value={row[field.key] || ''} 
+                        onChange={(url) => updateRow(index, field.key, url)} 
+                        accept={field.type === 'image' ? 'image/*' : 'video/*'} 
+                        label="" 
+                      />
+                    </div>
                   ) : (
                     <input
                       type={field.type === 'url' ? 'url' : 'text'}

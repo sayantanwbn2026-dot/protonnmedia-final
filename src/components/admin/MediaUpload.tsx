@@ -2,6 +2,8 @@ import { useState, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Upload, X, Loader2, Link as LinkIcon, HardDrive } from 'lucide-react';
+import { getMediaType } from '@/utils/mediaUtils';
+import MediaRenderer from '../ui/MediaRenderer';
 
 interface MediaUploadProps {
   value: string;
@@ -70,8 +72,7 @@ const MediaUpload = ({ value, onChange, accept = 'image/*,video/*', label = 'Med
     if (urlInput.trim()) toast.success('URL applied');
   };
 
-  const isImage = value && /\.(jpg|jpeg|png|gif|webp|svg|avif)(\?.*)?$/i.test(value);
-  const isVideo = value && /\.(mp4|webm|mov|ogg)(\?.*)?$/i.test(value);
+  const type = getMediaType(value);
 
   const tabClass = (active: boolean) =>
     `flex-1 flex items-center justify-center gap-1.5 py-1.5 font-body text-xs rounded transition-colors ${
@@ -85,15 +86,7 @@ const MediaUpload = ({ value, onChange, accept = 'image/*,video/*', label = 'Med
       {/* Preview */}
       {value && (
         <div className="relative group rounded-lg border border-border/20 overflow-hidden">
-          {isImage ? (
-            <img src={value} alt="" className="w-full h-32 object-cover" />
-          ) : isVideo ? (
-            <video src={value} className="w-full h-32 object-cover" muted />
-          ) : (
-            <div className="w-full h-16 flex items-center justify-center bg-muted/20">
-              <span className="font-body text-xs text-muted-foreground truncate px-4 max-w-full">{value}</span>
-            </div>
-          )}
+          <MediaRenderer url={value} className="w-full h-32" />
           <div className="absolute inset-0 bg-background/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
             <button type="button" onClick={() => inputRef.current?.click()} className="px-3 py-1.5 bg-primary text-primary-foreground font-body text-xs rounded hover:bg-primary/90 transition-colors">
               Replace
@@ -103,6 +96,12 @@ const MediaUpload = ({ value, onChange, accept = 'image/*,video/*', label = 'Med
             </button>
           </div>
         </div>
+      )}
+
+      {getMediaType(value) === 'instagram' && (
+        <p className="font-body text-[10px] text-destructive mt-1 bg-destructive/5 p-2 rounded border border-destructive/20">
+          Instagram direct URLs are not supported — use a direct uploaded file or oEmbed instead.
+        </p>
       )}
 
       {/* Mode Toggle */}
