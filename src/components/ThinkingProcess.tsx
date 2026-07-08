@@ -23,7 +23,7 @@ const ThinkingProcess = () => {
         scrollTrigger: { trigger: sectionRef.current, start: 'top 60%', end: 'bottom 40%', scrub: 1 },
       });
 
-      gsap.utils.toArray('.process-step').forEach((step: any) => {
+      gsap.utils.toArray('.process-step').forEach((step: HTMLElement) => {
         gsap.fromTo(step,
           { y: 40, opacity: 0 },
           { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out',

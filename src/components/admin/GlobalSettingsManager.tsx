@@ -42,7 +42,7 @@ const GlobalSettingsManager = () => {
 
     const initial: Record<string, string> = {};
     textSettings.forEach((s) => {
-      initial[s.key] = settings[s.key] ?? s.default;
+      initial[s.key] = (settings[s.key] as string) ?? s.default;
     });
     setForm(initial);
 
@@ -56,15 +56,15 @@ const GlobalSettingsManager = () => {
 
   // For text settings, sync from server ONLY if user hasn't modified the field
   // (We track this simply: update form values that match the OLD server value)
-  const prevSettingsRef = useRef<Record<string, any>>({});
+  const prevSettingsRef = useRef<Record<string, unknown>>({});
   useEffect(() => {
     if (!initializedRef.current) return;
     // Update text fields that haven't been locally modified
     setForm((prev) => {
       const next = { ...prev };
       textSettings.forEach((s) => {
-        const serverVal = settings[s.key] ?? s.default;
-        const oldServerVal = prevSettingsRef.current[s.key] ?? s.default;
+        const serverVal = (settings[s.key] as string) ?? s.default;
+        const oldServerVal = (prevSettingsRef.current[s.key] as string) ?? s.default;
         // If the local value still matches the old server value, update it
         if (prev[s.key] === oldServerVal || prev[s.key] === undefined) {
           next[s.key] = serverVal;
@@ -78,7 +78,7 @@ const GlobalSettingsManager = () => {
   const handleSave = async (key: string) => {
     setSaving(key);
     const { error } = await updateSetting(key, form[key]);
-    if (error) toast.error((error as any).message);
+    if (error) toast.error((error as Error).message);
     else toast.success('Saved');
     setSaving(null);
   };
@@ -93,7 +93,7 @@ const GlobalSettingsManager = () => {
       ]);
       const firstError = results.find(r => r.error);
       if (firstError?.error) {
-        toast.error((firstError.error as any).message);
+        toast.error((firstError.error as Error).message);
       } else {
         toast.success('Hero settings saved');
         heroDirtyRef.current = false;
@@ -113,7 +113,7 @@ const GlobalSettingsManager = () => {
       ]);
       const firstError = results.find(r => r.error);
       if (firstError?.error) {
-        toast.error((firstError.error as any).message);
+        toast.error((firstError.error as Error).message);
       } else {
         toast.success('Preloader settings saved');
       }
@@ -190,7 +190,7 @@ const GlobalSettingsManager = () => {
           onChange={(url) => { setHeroMediaUrl(url); heroDirtyRef.current = true; }}
           accept={heroMediaType === 'video' ? 'video/*' : 'image/*'}
           label={`Hero ${heroMediaType === 'video' ? 'Video' : 'Image'}`}
-          maxSizeMB={heroMediaType === 'video' ? 15 : 5}
+          maxSizeMB={heroMediaType === 'video' ? 15 : 10}
         />
 
         {/* Opacity Slider */}

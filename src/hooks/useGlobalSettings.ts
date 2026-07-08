@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
-type Settings = Record<string, any>;
+type Settings = Record<string, unknown>;
 
 export const useGlobalSettings = () => {
   const [settings, setSettings] = useState<Settings>({});
@@ -20,7 +20,7 @@ export const useGlobalSettings = () => {
       }
 
       const nextSettings: Settings = {};
-      (data ?? []).forEach((row: any) => {
+      (data ?? []).forEach((row: { key: string; value: unknown }) => {
         nextSettings[row.key] = row.value;
       });
 
@@ -53,11 +53,11 @@ export const useGlobalSettings = () => {
     };
   }, [fetchSettings]);
 
-  const getSetting = useCallback((key: string, fallback: any = null) => {
+  const getSetting = useCallback((key: string, fallback: unknown = null) => {
     return settings[key] ?? fallback;
   }, [settings]);
 
-  const updateSetting = useCallback(async (key: string, value: any) => {
+  const updateSetting = useCallback(async (key: string, value: unknown) => {
     try {
       const { error } = await supabase
         .from('global_settings')
@@ -70,9 +70,10 @@ export const useGlobalSettings = () => {
 
       setSettings((prev) => ({ ...prev, [key]: value }));
       return { error: null };
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(`Unexpected update error for "${key}":`, err);
-      return { error: { message: err?.message || 'Unknown error' } };
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      return { error: { message: errorMessage } };
     }
   }, []);
 

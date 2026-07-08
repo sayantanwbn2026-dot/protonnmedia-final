@@ -33,6 +33,7 @@ const Preloader = ({ onComplete }: Props) => {
         }, 7000);
 
         return () => clearTimeout(durationTimer);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [hasStarted, isMobile, onComplete]);
 
     const handleVideoPlay = () => {

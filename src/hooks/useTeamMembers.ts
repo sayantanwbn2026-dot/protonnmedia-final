@@ -39,12 +39,12 @@ export const useTeamMembers = () => {
   }, [fetchMembers]);
 
   const createMember = async (member: Partial<TeamMember>) => {
-    const { error } = await supabase.from('team_members').insert(member as any);
+    const { error } = await supabase.from('team_members').insert(member as Record<string, unknown>);
     return { error };
   };
 
   const updateMember = async (id: string, updates: Partial<TeamMember>) => {
-    const { error } = await supabase.from('team_members').update(updates as any).eq('id', id);
+    const { error } = await supabase.from('team_members').update(updates as Record<string, unknown>).eq('id', id);
     return { error };
   };
 

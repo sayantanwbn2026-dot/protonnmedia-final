@@ -96,7 +96,7 @@ const TeamManager = () => {
             onChange={(url) => setForm(p => ({ ...p, image_url: url }))}
             accept="image/*"
             label="Photo"
-            maxSizeMB={5}
+            maxSizeMB={10}
           />
           <div>
             <label className="font-body text-xs text-muted-foreground mb-1 block">Sort Order</label>

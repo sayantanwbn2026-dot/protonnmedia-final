@@ -130,7 +130,7 @@ const CinematicProjectView = ({ project, isOpen, onClose, showCaseStudyLink = tr
         {/* Image Section */}
         <div className="w-full md:w-1/2 min-h-[250px] md:min-h-full relative overflow-hidden flex-shrink-0 border-b md:border-b-0 md:border-r border-border/10">
           <MediaRenderer
-            ref={imageRef as any}
+            ref={imageRef as React.Ref<HTMLElement>}
             url={project.image}
             alt={project.title}
             className="w-full h-full object-cover"

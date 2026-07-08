@@ -30,7 +30,7 @@ const Process = () => {
         scrollTrigger: { trigger: '.process-timeline', start: 'top 60%', end: 'bottom 40%', scrub: 1 },
       });
 
-      gsap.utils.toArray('.timeline-step').forEach((step: any) => {
+      gsap.utils.toArray('.timeline-step').forEach((step: HTMLElement) => {
         gsap.fromTo(step,
           { y: 40, opacity: 0 },
           {

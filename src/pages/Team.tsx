@@ -31,7 +31,7 @@ const Team = () => {
       gsap.from(heroRef.current?.querySelectorAll('.anim') || [], {
         y: 50, opacity: 0, stagger: 0.12, duration: 1, ease: 'power3.out',
       });
-      gsap.utils.toArray('.team-card').forEach((card: any, i) => {
+      gsap.utils.toArray('.team-card').forEach((card: HTMLElement, i) => {
         gsap.fromTo(card,
           { y: 60, opacity: 0 },
           {
@@ -91,7 +91,7 @@ const Team = () => {
                   <div
                     key={member.id}
                     onMouseEnter={() => setHoveredMember(member)}
-                    className="team-card relative w-full max-w-[280px] mx-auto aspect-[3/4] overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]"
+                    className="team-card relative w-full max-w-[280px] mx-auto aspect-[3/4] overflow-hidden transition-all duration-700 ease-out"
                     style={{
                       transform: isHovered ? 'scale(1.02)' : isNotHovered ? 'scale(0.95)' : 'scale(1)',
                       zIndex: isHovered ? 10 : 1,
@@ -101,7 +101,7 @@ const Team = () => {
                     <img
                       src={member.image_url}
                       alt={member.name}
-                      className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out hover:scale-110"
+                      className="w-full h-full object-cover transition-transform duration-[1500ms] ease-out hover:scale-110"
                     />
 
                     {/* Default visible info that completely fades out on hover so the floating card takes over */}

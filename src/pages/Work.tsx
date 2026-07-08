@@ -23,13 +23,13 @@ const Work = () => {
     image: p.cover_image_url || 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800',
     overview: p.overview || p.description,
     directorsCut: p.challenge || '',
-    director: (p.team as any)?.[0]?.name || '',
+    director: (p.team as { name: string }[])?.[0]?.name || '',
   }));
 
   useEffect(() => {
     if (loading || mappedProjects.length === 0) return;
     const ctx = gsap.context(() => {
-      gsap.utils.toArray('.work-card').forEach((card: any, i) => {
+      gsap.utils.toArray('.work-card').forEach((card: HTMLElement, i) => {
         gsap.fromTo(card,
           { y: 60, opacity: 0 },
           {

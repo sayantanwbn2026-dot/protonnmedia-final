@@ -30,7 +30,7 @@ const ContactSubmissions = () => {
   const toggleRead = async (sub: Submission) => {
     const { error } = await supabase
       .from('contact_submissions')
-      .update({ is_read: !sub.is_read } as any)
+      .update({ is_read: !sub.is_read } as Record<string, unknown>)
       .eq('id', sub.id);
     if (error) toast.error(error.message);
     else fetchSubmissions();

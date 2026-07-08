@@ -36,13 +36,13 @@ const ProjectEditor = ({ project, onSave, onCancel }: ProjectEditorProps) => {
     videos: (project?.videos || []) as { title: string; url: string; thumbnail: string }[],
     stats: (project?.stats || []) as { label: string; value: string }[],
     awards: (project?.awards || []) as string[],
-    testimonial_quote: (project?.testimonial as any)?.quote || '',
-    testimonial_author: (project?.testimonial as any)?.author || '',
-    testimonial_role: (project?.testimonial as any)?.role || '',
+    testimonial_quote: project?.testimonial?.quote || '',
+    testimonial_author: project?.testimonial?.author || '',
+    testimonial_role: project?.testimonial?.role || '',
   });
   const [saving, setSaving] = useState(false);
 
-  const set = (key: string, value: any) => setForm((prev) => ({ ...prev, [key]: value }));
+  const set = <K extends keyof typeof form>(key: K, value: (typeof form)[K]) => setForm((prev) => ({ ...prev, [key]: value }));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,7 +73,7 @@ const ProjectEditor = ({ project, onSave, onCancel }: ProjectEditorProps) => {
       stats: form.stats,
       awards: form.awards.filter(Boolean),
       testimonial,
-    } as any);
+    } as Partial<Project>);
     setSaving(false);
   };
 
@@ -145,7 +145,7 @@ const ProjectEditor = ({ project, onSave, onCancel }: ProjectEditorProps) => {
         <div className={sectionClass}>
           <h3 className="font-display text-sm text-primary/80">Media</h3>
           <div className="grid grid-cols-2 gap-4">
-            <MediaUpload value={form.cover_image_url} onChange={(url) => set('cover_image_url', url)} accept="image/*" label="Cover Image" maxSizeMB={5} />
+            <MediaUpload value={form.cover_image_url} onChange={(url) => set('cover_image_url', url)} accept="image/*" label="Cover Image" maxSizeMB={10} />
             <MediaUpload value={form.hero_video_url} onChange={(url) => set('hero_video_url', url)} accept="video/*" label="Hero Video" maxSizeMB={15} />
           </div>
         </div>

@@ -1,4 +1,4 @@
-import { getMediaType, getYouTubeEmbedUrl } from '@/utils/mediaUtils';
+import { getMediaType, getYouTubeEmbedUrl, getInstagramEmbedUrl } from '@/utils/mediaUtils';
 import { type HTMLAttributes, forwardRef } from 'react';
 
 interface MediaRendererProps extends HTMLAttributes<HTMLElement> {
@@ -15,24 +15,43 @@ const MediaRenderer = forwardRef<HTMLElement, MediaRendererProps>(
     if (detectedType === 'youtube') {
       return (
         <iframe
-          ref={ref as any}
+          ref={ref as React.Ref<HTMLIFrameElement>}
           src={getYouTubeEmbedUrl(url)}
           className={`w-full h-full ${className}`}
           title={alt || 'YouTube Video'}
           frameBorder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
-          {...(props as any)}
+          {...(props as React.IframeHTMLAttributes<HTMLIFrameElement>)}
         />
       );
     }
 
     if (detectedType === 'instagram') {
+      const instagramEmbedUrl = getInstagramEmbedUrl(url);
+
+      if (instagramEmbedUrl) {
+        return (
+          <iframe
+            ref={ref as React.Ref<HTMLIFrameElement>}
+            src={instagramEmbedUrl}
+            className={`w-full h-full ${className}`}
+            title={alt || 'Instagram Video'}
+            frameBorder="0"
+            scrolling="no"
+            allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+            allowFullScreen
+            {...(props as React.IframeHTMLAttributes<HTMLIFrameElement>)}
+          />
+        );
+      }
+
+      // Fallback for non-embeddable Instagram URLs (e.g. profile links)
       return (
-        <div 
-          ref={ref as any}
-          className={`flex flex-col items-center justify-center p-4 bg-muted/20 border border-border/10 rounded-lg text-center ${className}`} 
-          {...(props as any)}
+        <div
+          ref={ref as React.Ref<HTMLDivElement>}
+          className={`flex flex-col items-center justify-center p-4 bg-muted/20 border border-border/10 rounded-lg text-center ${className}`}
+          {...(props as React.HTMLAttributes<HTMLDivElement>)}
         >
           <span className="font-body text-[10px] text-muted-foreground uppercase tracking-wider mb-2">Instagram content</span>
           <a href={url} target="_blank" rel="noopener noreferrer" className="font-body text-xs text-primary underline underline-offset-4 decoration-primary/40 hover:decoration-primary transition-colors">
@@ -45,12 +64,12 @@ const MediaRenderer = forwardRef<HTMLElement, MediaRendererProps>(
     if (detectedType === 'video') {
       return (
         <video 
-          ref={ref as any}
+          ref={ref as React.Ref<HTMLVideoElement>}
           src={url} 
           className={`w-full h-full object-cover ${className}`} 
           controls 
           playsInline 
-          {...(props as any)} 
+          {...(props as React.VideoHTMLAttributes<HTMLVideoElement>)} 
         />
       );
     }
@@ -58,7 +77,7 @@ const MediaRenderer = forwardRef<HTMLElement, MediaRendererProps>(
     // Default to image or fallback
     return (
       <img 
-        ref={ref as any}
+        ref={ref as React.Ref<HTMLImageElement>}
         src={url || 'https://images.unsplash.com/photo-1518770662639-470d65609e7c?w=1200'} 
         className={`w-full h-full object-cover ${className}`} 
         alt={alt} 
@@ -67,7 +86,7 @@ const MediaRenderer = forwardRef<HTMLElement, MediaRendererProps>(
           // Fallback for broken image
           e.currentTarget.src = 'https://images.unsplash.com/photo-1518770662639-470d65609e7c?w=1200';
         }}
-        {...(props as any)}
+        {...(props as React.ImgHTMLAttributes<HTMLImageElement>)}
       />
     );
   }

@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Upload, X, Loader2, Link as LinkIcon, HardDrive } from 'lucide-react';
-import { getMediaType } from '@/utils/mediaUtils';
+import { getMediaType, getInstagramEmbedUrl } from '@/utils/mediaUtils';
 import MediaRenderer from '../ui/MediaRenderer';
 
 interface MediaUploadProps {
@@ -21,10 +21,10 @@ const MediaUpload = ({ value, onChange, accept = 'image/*,video/*', label = 'Med
   const [urlInput, setUrlInput] = useState(value || '');
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Auto-detect max size: images 5MB, videos 15MB
+  // Auto-detect max size: images 10MB, videos 15MB
   const getMaxSize = (file: File) => {
     if (maxSizeMB) return maxSizeMB;
-    return file.type.startsWith('video/') ? 15 : 5;
+    return file.type.startsWith('video/') ? 15 : 10;
   };
 
   const upload = async (file: File) => {
@@ -99,9 +99,15 @@ const MediaUpload = ({ value, onChange, accept = 'image/*,video/*', label = 'Med
       )}
 
       {getMediaType(value) === 'instagram' && (
-        <p className="font-body text-[10px] text-destructive mt-1 bg-destructive/5 p-2 rounded border border-destructive/20">
-          Instagram direct URLs are not supported — use a direct uploaded file or oEmbed instead.
-        </p>
+        getInstagramEmbedUrl(value) ? (
+          <p className="font-body text-[10px] text-muted-foreground mt-1 bg-primary/5 p-2 rounded border border-primary/20">
+            Instagram post/reel detected — it will be embedded and playable on the site.
+          </p>
+        ) : (
+          <p className="font-body text-[10px] text-destructive mt-1 bg-destructive/5 p-2 rounded border border-destructive/20">
+            This Instagram link can't be embedded. Paste a post or reel URL (e.g. instagram.com/reel/…) or upload a file directly.
+          </p>
+        )
       )}
 
       {/* Mode Toggle */}
@@ -130,7 +136,7 @@ const MediaUpload = ({ value, onChange, accept = 'image/*,video/*', label = 'Med
             <>
               <Upload className="w-4 h-4 text-muted-foreground" />
               <span className="font-body text-xs text-muted-foreground">Drop file or click</span>
-              <span className="font-body text-[10px] text-muted-foreground/60">Images: max 5MB · Videos: max 15MB</span>
+              <span className="font-body text-[10px] text-muted-foreground/60">{maxSizeMB ? `Max ${maxSizeMB}MB` : 'Images: max 10MB · Videos: max 15MB'}</span>
             </>
           )}
         </div>

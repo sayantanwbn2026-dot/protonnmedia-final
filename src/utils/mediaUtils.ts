@@ -31,6 +31,20 @@ export const getYouTubeEmbedUrl = (url: string) => {
   }
 };
 
+// Converts an Instagram post/reel/tv URL into an embeddable iframe URL.
+// Supports: /p/, /reel/, /reels/, /tv/ — with or without a leading username.
+// Returns null for non-embeddable Instagram URLs (e.g. profile links).
+export const getInstagramEmbedUrl = (url: string) => {
+  try {
+    const match = url.match(/instagram\.com\/(?:[^/?#]+\/)?(p|reel|reels|tv)\/([A-Za-z0-9_-]+)/i);
+    if (!match) return null;
+    const type = match[1].toLowerCase() === 'reels' ? 'reel' : match[1].toLowerCase();
+    return `https://www.instagram.com/${type}/${match[2]}/embed`;
+  } catch (e) {
+    return null;
+  }
+};
+
 export const getYouTubeThumbnailUrl = (url: string) => {
   try {
     let videoId = '';

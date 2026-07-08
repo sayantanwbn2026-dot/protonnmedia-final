@@ -58,12 +58,12 @@ export const useProjects = () => {
   const getProjectBySlug = (slug: string) => projects.find((p) => p.slug === slug);
 
   const createProject = async (project: Partial<Project>) => {
-    const { error } = await supabase.from('projects').insert(project as any);
+    const { error } = await supabase.from('projects').insert(project as Record<string, unknown>);
     return { error };
   };
 
   const updateProject = async (id: string, updates: Partial<Project>) => {
-    const { error } = await supabase.from('projects').update(updates as any).eq('id', id);
+    const { error } = await supabase.from('projects').update(updates as Record<string, unknown>).eq('id', id);
     return { error };
   };
 

@@ -32,14 +32,14 @@ const BentoGrid = () => {
       image: p.cover_image_url || 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800',
       overview: p.overview || p.description,
       directorsCut: p.challenge || '',
-      director: (p.team as any)?.[0]?.name || '',
+      director: (p.team as { name: string }[])?.[0]?.name || '',
     }))
     : (loading ? [] : fallbackProjects);
 
   useEffect(() => {
     if (mappedProjects.length === 0) return;
     const ctx = gsap.context(() => {
-      gsap.utils.toArray('.bento-card').forEach((card: any) => {
+      gsap.utils.toArray('.bento-card').forEach((card: HTMLElement) => {
         gsap.fromTo(card,
           { y: 80, opacity: 0 },
           {
@@ -82,7 +82,7 @@ const BentoGrid = () => {
             >
               <MediaRenderer 
                 url={project.image} 
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1.2s] ease-out group-hover:scale-105 grayscale group-hover:grayscale-0" 
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-105 grayscale group-hover:grayscale-0" 
               />
               <div className="absolute inset-0 bg-background/70 group-hover:bg-background/50 transition-colors duration-500" />
               <div className="absolute inset-0 p-6 flex flex-col justify-end">

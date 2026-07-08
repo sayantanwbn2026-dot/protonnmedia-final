@@ -22,7 +22,7 @@ const Contact = () => {
       name: formData.name,
       email: formData.email,
       message: formData.company ? `[Company: ${formData.company}]\n\n${formData.message}` : formData.message,
-    } as any);
+    } as Record<string, unknown>);
 
     if (error) {
       toast.error('Failed to send message. Please try again.');

@@ -1,7 +1,7 @@
 import { useParams, Link } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import MediaRenderer from '@/components/ui/MediaRenderer';
-import { getYouTubeThumbnailUrl } from '@/utils/mediaUtils';
+import { getYouTubeThumbnailUrl, getMediaType } from '@/utils/mediaUtils';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowLeft, Play, Award, Quote } from 'lucide-react';
@@ -24,7 +24,7 @@ const CaseStudyDetail = () => {
       gsap.from(heroRef.current?.querySelectorAll('.anim') || [], {
         y: 60, opacity: 0, stagger: 0.1, duration: 1, ease: 'power3.out',
       });
-      gsap.utils.toArray('.cs-section').forEach((section: any) => {
+      gsap.utils.toArray('.cs-section').forEach((section: HTMLElement) => {
         gsap.fromTo(section,
           { y: 40, opacity: 0 },
           { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out',
@@ -211,20 +211,30 @@ const CaseStudyDetail = () => {
           <div className="max-w-5xl mx-auto">
             <h2 className="cs-section font-display text-2xl text-center mb-10">Watch the <em className="text-primary">film</em></h2>
             <div className="cs-section grid sm:grid-cols-2 gap-6">
-              {videos.map((video) => (
+              {videos.map((video) => {
+                const isInstagram = video.url ? getMediaType(video.url) === 'instagram' : false;
+                
+                return (
                 <div 
                   key={video.title} 
                   className="group relative cursor-pointer" 
                   data-cursor-hover 
-                  onClick={() => video.url && setPlayingVideoUrl(video.url)}
+                  onClick={() => {
+                    if (!video.url) return;
+                    if (isInstagram) {
+                      window.open(video.url, '_blank', 'noopener,noreferrer');
+                    } else {
+                      setPlayingVideoUrl(video.url);
+                    }
+                  }}
                 >
                   <div className="relative aspect-video overflow-hidden">
-                    {playingVideoUrl === video.url ? (
+                    {playingVideoUrl === video.url && !isInstagram ? (
                       <MediaRenderer url={video.url} className="w-full h-full" />
                     ) : (
                       <>
                         <img 
-                          src={video.thumbnail || getYouTubeThumbnailUrl(video.url) || 'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=1200'} 
+                          src={video.thumbnail || getYouTubeThumbnailUrl(video.url || '') || 'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=1200'} 
                           alt={video.title} 
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
                           onError={(e) => {
@@ -242,7 +252,7 @@ const CaseStudyDetail = () => {
                   </div>
                   <h3 className="font-display text-base mt-3">{video.title}</h3>
                 </div>
-              ))}
+              )})}
             </div>
           </div>
         </section>
